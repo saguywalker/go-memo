@@ -2,12 +2,12 @@ package http
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
-	
+
 	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
 
 	"github.com/saguywalker/go-memo/memo"
 	"github.com/saguywalker/go-memo/model"
@@ -77,7 +77,7 @@ func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	noteID, ok := vars["id"]
 	if !ok {
-		http.Error(w, errors.New("missing note id"), http.StatusBadRequest)
+		http.Error(w, "missing note id", http.StatusBadRequest)
 		return
 	}
 
