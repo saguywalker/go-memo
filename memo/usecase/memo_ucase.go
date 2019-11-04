@@ -13,6 +13,7 @@ type memoUsecase struct {
 	contextTimeout time.Duration
 }
 
+// NewMemoUsecase return a memoUsecase with memo's repository and duration
 func NewMemoUsecase(mr memo.Repository, timeout time.Duration) memo.Usecase {
 	return &memoUsecase{
 		memoRepo:       mr,
@@ -21,17 +22,25 @@ func NewMemoUsecase(mr memo.Repository, timeout time.Duration) memo.Usecase {
 }
 
 func (m *memoUsecase) Fetch(c context.Context) ([]*model.Note, error) {
-	return nil, nil
+	ctx, cancel := context.WithTimeout(c, m.contextTimeout)
+	defer cancel()
+	return m.memoRepo.Fetch(ctx)
 }
 
 func (m *memoUsecase) GetByID(c context.Context, id []byte) (*model.Note, error) {
-	return nil, nil
+	ctx, cancel := context.WithTimeout(c, m.contextTimeout)
+	defer cancel()
+	return m.memoRepo.GetByID(ctx, id)
 }
 
 func (m *memoUsecase) Store(c context.Context, note *model.Note) error {
-	return nil
+	ctx, cancel := context.WithTimeout(c, m.contextTimeout)
+	defer cancel()
+	return m.memoRepo.Store(ctx, note)
 }
 
 func (m *memoUsecase) Update(c context.Context, note *model.Note) error {
-	return nil
+	ctx, cancel := context.WithTimeout(c, m.contextTimeout)
+	defer cancel()
+	return m.memoRepo.Update(ctx, note)
 }
