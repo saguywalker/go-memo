@@ -8,15 +8,18 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/syndtr/goleveldb/leveldb"
 
 	"github.com/saguywalker/go-memo/memo"
 	"github.com/saguywalker/go-memo/model"
 )
 
+// MemoHandler struct define routes for memo's usecase
 type MemoHandler struct {
 	MHandler memo.Usecase
 }
 
+// NewMemoHandler return new MemoHandler
 func NewMemoHandler(r *mux.Router, uc memo.Usecase) {
 	handler := &MemoHandler{
 		MHandler: uc,
@@ -28,6 +31,7 @@ func NewMemoHandler(r *mux.Router, uc memo.Usecase) {
 	r.HandleFunc("/notes/{id}", handler.Update).Methods("PUT")
 }
 
+// Store for storing note
 func (m *MemoHandler) Store(w http.ResponseWriter, r *http.Request) {
 	var note model.Note
 
@@ -54,6 +58,7 @@ func (m *MemoHandler) Store(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(fmt.Sprintf("Memo: %d (%s) is created", note.Id, note.Title)))
 }
 
+// Fetch for retriving all notes
 func (m *MemoHandler) Fetch(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	notes, err := m.MHandler.Fetch(ctx)
@@ -72,17 +77,22 @@ func (m *MemoHandler) Fetch(w http.ResponseWriter, r *http.Request) {
 	w.Write(notesBytes)
 }
 
+// GetByID for retriving a note from id
 func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	vars := mux.Vars(r)
-	noteId, ok := vars["id"]
+	noteID, ok := vars["id"]
 	if !ok {
 		http.Error(w, "missing note id", http.StatusBadRequest)
 		return
 	}
 
-	note, err := m.MHandler.GetByID(ctx, []byte(noteId))
+	note, err := m.MHandler.GetByID(ctx, []byte(noteID))
 	if err != nil {
+		if err == leveldb.ErrNotFound {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -97,6 +107,7 @@ func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	w.Write(noteByte)
 }
 
+// Update for updating a note detail from id
 func (m *MemoHandler) Update(w http.ResponseWriter, r *http.Request) {
 	var note model.Note
 
