@@ -15,10 +15,12 @@ type badgerMemoRepository struct {
 	DB *badger.DB
 }
 
+// NewBadgerMemoRepository wrap a badger database
 func NewBadgerMemoRepository(db *badger.DB) memo.Repository {
 	return &badgerMemoRepository{db}
 }
 
+// Fetch retrive all notes from badger
 func (m *badgerMemoRepository) Fetch(ctx context.Context) ([]*model.Note, error) {
 	var notes []*model.Note
 
@@ -49,6 +51,7 @@ func (m *badgerMemoRepository) Fetch(ctx context.Context) ([]*model.Note, error)
 	return notes, nil
 }
 
+// GetByID retrive a note from note id
 func (m *badgerMemoRepository) GetByID(ctx context.Context, id []byte) (*model.Note, error) {
 	var note model.Note
 
@@ -77,6 +80,7 @@ func (m *badgerMemoRepository) GetByID(ctx context.Context, id []byte) (*model.N
 	return &note, nil
 }
 
+// Store store a new note
 func (m *badgerMemoRepository) Store(ctx context.Context, note *model.Note) error {
 	noteBytes, err := proto.Marshal(note)
 	if err != nil {
@@ -100,6 +104,25 @@ func (m *badgerMemoRepository) Store(ctx context.Context, note *model.Note) erro
 	return nil
 }
 
+// Update update a note from note id
 func (m *badgerMemoRepository) Update(ctx context.Context, note *model.Note) error {
+	txn := m.DB.NewTransaction(true)
+
+	keyID := make([]byte, 8)
+	binary.PutUvarint(keyID, note.Id)
+	if _, err := txn.Get(keyID); err != nil {
+		return err
+	}
+
+	noteBytes, err := proto.Marshal(note)
+	if err != nil {
+		return err
+	}
+	txn.Set(keyID, noteBytes)
+	
+	if err := txn.Commit(); err != nil {
+		return err
+	}
+
 	return nil
 }
