@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"encoding/binary"
 
 	"github.com/dgraph-io/badger"
 	"github.com/golang/protobuf/proto"
@@ -72,7 +73,7 @@ func (m *badgerMemoRepository) GetByID(ctx context.Context, id []byte) (*model.N
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &note, nil
 }
 
@@ -82,12 +83,20 @@ func (m *badgerMemoRepository) Store(ctx context.Context, note *model.Note) erro
 		return err
 	}
 
-	
-
 	txn := m.DB.NewTransaction(true)
 	defer txn.Discard()
 
-	
+	keyID := make([]byte, 8)
+	binary.PutUvarint(keyID, note.Id)
+
+	if err := txn.Set(keyID, noteBytes); err != nil {
+		return err
+	}
+
+	if err := txn.Commit(); err != nil {
+		return err
+	}
+
 	return nil
 }
 

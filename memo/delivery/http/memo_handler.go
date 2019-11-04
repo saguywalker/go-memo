@@ -51,7 +51,7 @@ func (m *MemoHandler) Store(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("Memo: %d (%s) is created", note.ID, note.Title)))
+	w.Write([]byte(fmt.Sprintf("Memo: %d (%s) is created", note.Id, note.Title)))
 }
 
 func (m *MemoHandler) Fetch(w http.ResponseWriter, r *http.Request) {
@@ -75,13 +75,13 @@ func (m *MemoHandler) Fetch(w http.ResponseWriter, r *http.Request) {
 func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	vars := mux.Vars(r)
-	noteID, ok := vars["id"]
+	noteId, ok := vars["id"]
 	if !ok {
 		http.Error(w, "missing note id", http.StatusBadRequest)
 		return
 	}
 
-	note, err := m.MHandler.GetByID(ctx, noteID)
+	note, err := m.MHandler.GetByID(ctx, noteId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -120,5 +120,5 @@ func (m *MemoHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("Memo: %d (%s) is created", note.ID, note.Title)))
+	w.Write([]byte(fmt.Sprintf("Memo: %d (%s) is created", note.Id, note.Title)))
 }

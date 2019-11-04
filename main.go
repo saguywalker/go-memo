@@ -28,7 +28,7 @@ func main() {
 	defer db.Close()
 
 	memoRepo := _memoRepo.NewBadgerMemoRepository(db)
-	memoUcase := _memoUcase.NewMemoUsecase(memoRepo)
+	memoUcase := _memoUcase.NewMemoUsecase(memoRepo, time.Duration(15*time.Second))
 
 	router := mux.NewRouter()
 	_memoHttpDeliver.NewMemoHandler(router.PathPrefix("/api").Subrouter(), memoUcase)
