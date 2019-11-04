@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/golang/protobuf/ptypes"
+
 	"github.com/saguywalker/go-memo/memo"
 	"github.com/saguywalker/go-memo/model"
 )
@@ -36,11 +38,17 @@ func (m *memoUsecase) GetByID(c context.Context, id []byte) (*model.Note, error)
 func (m *memoUsecase) Store(c context.Context, note *model.Note) error {
 	ctx, cancel := context.WithTimeout(c, m.contextTimeout)
 	defer cancel()
+
+	note.LastEdit = ptypes.TimestampNow()
+
 	return m.memoRepo.Store(ctx, note)
 }
 
 func (m *memoUsecase) Update(c context.Context, note *model.Note) error {
 	ctx, cancel := context.WithTimeout(c, m.contextTimeout)
 	defer cancel()
+
+	note.LastEdit = ptypes.TimestampNow()
+
 	return m.memoRepo.Update(ctx, note)
 }
