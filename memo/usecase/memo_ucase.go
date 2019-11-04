@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"encoding/binary"
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
@@ -13,6 +14,7 @@ import (
 type memoUsecase struct {
 	memoRepo       memo.Repository
 	contextTimeout time.Duration
+	CounterID      uint64
 }
 
 // NewMemoUsecase return a memoUsecase with memo's repository and duration
@@ -20,6 +22,7 @@ func NewMemoUsecase(mr memo.Repository, timeout time.Duration) memo.Usecase {
 	return &memoUsecase{
 		memoRepo:       mr,
 		contextTimeout: timeout,
+		CounterID:      1,
 	}
 }
 
@@ -29,10 +32,14 @@ func (m *memoUsecase) Fetch(c context.Context) ([]*model.Note, error) {
 	return m.memoRepo.Fetch(ctx)
 }
 
-func (m *memoUsecase) GetByID(c context.Context, id []byte) (*model.Note, error) {
+func (m *memoUsecase) GetByID(c context.Context, id uint64) (*model.Note, error) {
 	ctx, cancel := context.WithTimeout(c, m.contextTimeout)
 	defer cancel()
-	return m.memoRepo.GetByID(ctx, id)
+
+	keyID := make([]byte, 8)
+	binary.PutUvarint(keyID, id)
+
+	return m.memoRepo.GetByID(ctx, keyID)
 }
 
 func (m *memoUsecase) Store(c context.Context, note *model.Note) error {
@@ -40,8 +47,14 @@ func (m *memoUsecase) Store(c context.Context, note *model.Note) error {
 	defer cancel()
 
 	note.LastEdit = ptypes.TimestampNow()
+	note.Id = m.CounterID
 
-	return m.memoRepo.Store(ctx, note)
+	if err := m.memoRepo.Store(ctx, note); err != nil {
+		return err
+	}
+
+	m.CounterID++
+	return nil
 }
 
 func (m *memoUsecase) Update(c context.Context, note *model.Note) error {

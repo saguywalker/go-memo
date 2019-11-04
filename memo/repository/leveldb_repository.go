@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/binary"
 	"errors"
+	"fmt"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -85,9 +86,13 @@ func (m *leveldbMemoRepository) Store(ctx context.Context, note *model.Note) err
 func (m *leveldbMemoRepository) Update(ctx context.Context, note *model.Note) error {
 	keyID := make([]byte, 8)
 	binary.PutUvarint(keyID, note.Id)
-	_, err := m.DB.Get(keyID, nil)
-	if err == nil {
+	oldKey, err := m.DB.Get(keyID, nil)
+	if err != nil {
 		return err
+	}
+
+	if len(oldKey) == 0 {
+		return fmt.Errorf("does not exist")
 	}
 
 	noteBytes, err := proto.Marshal(note)

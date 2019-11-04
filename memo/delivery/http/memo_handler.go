@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -87,7 +88,13 @@ func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	note, err := m.MHandler.GetByID(ctx, []byte(noteID))
+	noteIDInt, err := strconv.ParseUint(noteID, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	note, err := m.MHandler.GetByID(ctx, noteIDInt)
 	if err != nil {
 		if err == leveldb.ErrNotFound {
 			http.Error(w, err.Error(), http.StatusNotFound)
