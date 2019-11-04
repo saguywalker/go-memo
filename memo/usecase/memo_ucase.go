@@ -13,7 +13,7 @@ type memoUsecase struct {
 	contextTimeout time.Duration
 }
 
-func NewMemoUsecase(mr memo.Repository, timeout time.Duration) *memoUsecase {
+func NewMemoUsecase(mr memo.Repository, timeout time.Duration) memo.Usecase {
 	return &memoUsecase{
 		memoRepo:       mr,
 		contextTimeout: timeout,

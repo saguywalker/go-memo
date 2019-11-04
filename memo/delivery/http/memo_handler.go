@@ -81,7 +81,7 @@ func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	note, err := m.MHandler.GetByID(ctx, noteId)
+	note, err := m.MHandler.GetByID(ctx, []byte(noteId))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
