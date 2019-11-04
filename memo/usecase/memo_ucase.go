@@ -9,14 +9,29 @@ import (
 )
 
 type memoUsecase struct {
-	memoRepo memo.Repository
+	memoRepo       memo.Repository
 	contextTimeout time.Duration
 }
 
-func NewMemoUsecase(mr model.Repository, timeout time.Duration) *memoUsecase {
+func NewMemoUsecase(mr memo.Repository, timeout time.Duration) *memoUsecase {
 	return &memoUsecase{
-		memoRepo: mr,
+		memoRepo:       mr,
 		contextTimeout: timeout,
 	}
+}
 
+func (m *memoUsecase) Fetch(c context.Context) ([]*model.Note, error) {
+	return nil, nil
+}
+
+func (m *memoUsecase) GetByID(c context.Context, id []byte) (*model.Note, error) {
+	return nil, nil
+}
+
+func (m *memoUsecase) Store(c context.Context, note *model.Note) error {
+	return nil
+}
+
+func (m *memoUsecase) Update(c context.Context, note *model.Note) error {
+	return nil
 }

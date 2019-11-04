@@ -8,8 +8,8 @@ import (
 
 // Usecase represent the memo's usecase
 type Usecase interface {
-	Fetch(ctx context.Context) ([]*model.Note, error)
-	GetByID(ctx context.Context, id string) (*model.Note, error)
-	Store(ctx context.Context, note *model.Note) error
-	Update(ctx context.Context, note *model.Note) error
+	Fetch(context.Context) ([]*model.Note, error)
+	GetByID(context.Context, string) (*model.Note, error)
+	Store(context.Context, *model.Note) error
+	Update(context.Context, *model.Note) error
 }
