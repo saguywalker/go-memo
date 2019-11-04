@@ -119,7 +119,7 @@ func (m *badgerMemoRepository) Update(ctx context.Context, note *model.Note) err
 		return err
 	}
 	txn.Set(keyID, noteBytes)
-	
+
 	if err := txn.Commit(); err != nil {
 		return err
 	}
