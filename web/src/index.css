@@ -5,9 +5,61 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #209cee;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.App {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.Note-input {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  background: #e8e8e8;
+  border-radius: 4px;
+  padding: 25px;
+  width: 100%;
+}
+
+.Note-list {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  background: #e8e8e8;
+  border-radius: 4px;
+  padding: 25px;
+  width: 100%;
+}
+
+.Note-box {
+  background: #fff;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+  padding: 3px 10px;
+  margin-bottom: 6px;
+  border-radius: 3px;
+  max-height: 200px;
+}
+
+.Note-box-edit {
+  height: auto;
+  background: #fff;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+  padding: 3px 10px;
+  margin-bottom: 6px;
+  border-radius: 3px;
+}
+
+.Note-box-link {
+  color: black;
+}
+
+.Note-box  .text {
+  max-height: 100px;
+  word-wrap: break-word;
+  overflow-y: auto;
 }
