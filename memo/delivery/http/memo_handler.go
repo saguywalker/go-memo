@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -32,7 +31,7 @@ func NewMemoHandler(r *mux.Router, uc memo.Usecase) {
 	r.HandleFunc("/notes/{id}", handler.Update).Methods("PUT", "OPTIONS")
 }
 
-// Store for storing note
+// Store handle a creating note request
 func (m *MemoHandler) Store(w http.ResponseWriter, r *http.Request) {
 	var note model.Note
 
@@ -42,8 +41,6 @@ func (m *MemoHandler) Store(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	log.Printf("In Store: %s\n", body)
 
 	ctx := context.Background()
 
@@ -63,11 +60,11 @@ func (m *MemoHandler) Store(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	w.Write(noteBytes)
 }
 
-// Fetch for retriving all notes
+// Fetch retrive all notes
 func (m *MemoHandler) Fetch(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 
@@ -82,8 +79,6 @@ func (m *MemoHandler) Fetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("In Fetch: %+v\n", notes)
-
 	notesBytes, err := json.Marshal(notes)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -94,7 +89,7 @@ func (m *MemoHandler) Fetch(w http.ResponseWriter, r *http.Request) {
 	w.Write(notesBytes)
 }
 
-// GetByID for retriving a note from id
+// GetByID retrive a note from id
 func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	vars := mux.Vars(r)
@@ -124,8 +119,6 @@ func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-
-	log.Printf("In GetByID: %+v\n", note)
 
 	noteByte, err := json.Marshal(note)
 	if err != nil {
@@ -163,8 +156,6 @@ func (m *MemoHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	note.Id = noteIDInt
 
-	log.Printf("In Edit: %s\n", body)
-
 	ctx := context.Background()
 
 	if err := json.Unmarshal(body, &note); err != nil {
@@ -183,6 +174,6 @@ func (m *MemoHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	w.Write(notesBytes)
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -18,16 +17,10 @@ import (
 )
 
 func main() {
-	// dbDir := flag.String("dbdir", "memodb", "a db path for storing memo")
+	dbDir := flag.String("dbdir", "memodb", "a db path for storing memo")
 	flag.Parse()
 
-	// db, err := leveldb.OpenFile(*dbDir, nil)
-	dbDir, err := ioutil.TempDir("", "memodb_test")
-	if err != nil {
-		panic(err)
-	}
-
-	db, err := leveldb.OpenFile(dbDir, nil)
+	db, err := leveldb.OpenFile(*dbDir, nil)
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
@@ -41,7 +34,6 @@ func main() {
 	_memoHttpDeliver.NewMemoHandler(router.PathPrefix("/api").Subrouter(), memoUcase)
 
 	c := cors.AllowAll()
-
 	corsHandler := c.Handler(router)
 
 	srv := &http.Server{
