@@ -9,6 +9,7 @@ const endpoint = "http://localhost:3000";
 function App() {
   const [notes, setNotes] = useState([]);
 
+  // Fetch data from db first time on load
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios({
@@ -22,43 +23,47 @@ function App() {
     fetchData();
   }, []);
 
-  function addNote({ title, noteDetail }) {
+  function addNote(editValue) {
+    const payload =  {
+      title: editValue.title,
+      detail: editValue.detail
+    };
     axios.post(
-      endpoint+"/api/notes", 
-      { id: 0, title: title, detail: noteDetail, lastEdit: "" },
+      `${endpoint}/api/notes`,
+      payload,
       {
         headers: {
           "Content-Type": "application/json"
         },
         responseType: 'json'
       }
-    ).then( (res) => {
+    ).then((res) => {
       const newNotes = [...notes, res.data];
       setNotes(newNotes);
     });
-    // const result = await axios(endpoint+"/api/notes")
-    // const newNotes = [...notes, { title, noteDetail }];
-    // setNotes(newNotes);
   };
 
-  function setEditNote(editValue, index) {
-    const payload = {id: index, title: editValue.title, detail: editValue.noteDetail, lastEdit: +new Date}
+  function setEditNoteMain(editValue) {
+    const payload = {
+      title: editValue.title,
+      detail: editValue.detail,
+      lastEdit:  new Date()
+    };
     axios.put(
-      endpoint+"/api/notes", 
-      {editValue},
+      `${endpoint}/api/notes/${editValue.id}`, 
+      payload,
       {
         headers: {
           "Content-Type": "application/json"
         },
         responseType: 'json'
       }
-    ).then( (res) => {
-      const newNotes = [...notes, res.data];
-      setNotes(newNotes);
+    ).then((res) => {
+      setNotes(notes.map((note) => {
+        if (note.id === res.data.id) return res.data;
+        return note;
+      }));
     });
-    // const newNotes = [...notes];
-    // newNotes[index] = editValue;
-    // setNotes(newNotes);
   }
 
   return (
@@ -75,7 +80,7 @@ function App() {
                 key={index}
                 index={index}
                 note={note}
-                setEditValueCallbackParent={(edit) => setEditNote(edit, index)}
+                setEditValueCallbackParent={(edit) => setEditNoteMain(edit)}
               />
             )) :
             <h4>There is no note.</h4>  

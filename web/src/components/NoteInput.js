@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 
 function NoteInput({ addNote }) {
-  const [value, setValue] = useState( { title: "", noteDetail: ""} );
+  const [value, setValue] = useState( { title: "", detail: ""} );
 
   const handleSubmit = (e) => {
-    console.log(value)
     e.preventDefault();
-    if (!value.title || !value.noteDetail) return;
+    if (!value.title || !value.detail) return;
     addNote(value);
-    setValue({ title: "", noteDetail: ""});
+    setValue({ title: "", detail: ""});
   };
 
   return (
@@ -36,12 +35,12 @@ function NoteInput({ addNote }) {
             id="detailInput"
             className="form-control"
             rows="5"
-            value={value.noteDetail}
+            value={value.detail}
             placeholder="Enter detail"
             onChange={e => {
               setValue({
                 ...value,
-                noteDetail: e.target.value
+                detail: e.target.value
               })
             }}
           ></textarea>

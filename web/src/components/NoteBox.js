@@ -1,24 +1,26 @@
 import React, { useState } from "react";
-import NoteBoxEdit from "./NoteBoxEdit.js";
+import NoteBoxDetail from "./NoteBoxDetail.js";
 
 function NoteBox({ note, setEditValueCallbackParent }) {
-  const [isEdit, setIsEdit] = useState(false);
+  const [isSeeMore, setIsSeeMore] = useState(false);
 
   if (note == null) return;
-  console.log(note);
 
   return (
     <>
       {
-        !isEdit ? 
+        !isSeeMore ? 
         <div className="Note-box">
-          <h4>{note.title}</h4>
-          <p className="text">{note.noteDetail}</p>
-          <button type="button" className="btn btn-link" onClick={() => setIsEdit(true)}>Edit</button>
+          <div className="box-header">
+            <h4>{note.title}</h4>
+            <p>Last edit: {note.lastEdit}</p>
+          </div>
+          <p className="text">{note.detail}</p>
+          <button type="button" className="btn btn-link" onClick={() => setIsSeeMore(true)}>More</button>
         </div> :
-        <NoteBoxEdit
+        <NoteBoxDetail
           note={note}
-          setIsEditCallback={(isEditData) => setIsEdit(isEditData)}
+          onCloseNoteBoxDetail={(isSeeMoreData) => setIsSeeMore(isSeeMoreData)}
           setEditValueCallback={(editValue) => setEditValueCallbackParent(editValue)}
         />
       }

@@ -1,36 +1,39 @@
 import React, { useState } from "react";
 
-function NoteBox({ note, setIsEditCallback, setEditValueCallback }) {
+function NoteBox({ note, setIsEditCallback, setEditValueCallback, closeNoteBoxDetail }) {
   const [editValue, setEditValue] = useState({...note});
 
   function submitEdit() {
     // Edit request to api
     setEditValueCallback(editValue);
     setIsEditCallback(false);
-    setEditValue({ title: "", noteDetail: "" });
+    closeNoteBoxDetail();
+    setEditValue({ title: "", detail: "" });
   }
 
   return (
-    <div className="Note-box-edit">
-        <input
-            type="text"
-            className="form-control"
-            value={editValue.title}
-            placeholder="Enter tile"
-            onChange={e => setEditValue({
-                ...editValue,
-                title: e.target.value
-            })}
-        />
-        <textarea
-            className="form-control"
-            rows="5"
-            value={editValue.noteDetail}
-            onChange={e => setEditValue({
-                ...editValue,
-                noteDetail: e.target.value
-            })}
-        ></textarea>
+    <div>
+      <input
+        type="text"
+        className="form-control"
+        value={editValue.title}
+        placeholder="Enter tile"
+        onChange={e => setEditValue({
+            ...editValue,
+            title: e.target.value
+        })}
+      />
+      <textarea
+        className="form-control"
+        rows="5"
+        value={editValue.detail}
+        onChange={e => setEditValue({
+            ...editValue,
+            detail: e.target.value
+        })}
+      ></textarea>
+      <br />
+      <br />
       <button className="btn btn-primary" onClick={submitEdit}>Submit</button>
       <button className="btn btn-danger" onClick={() => setIsEditCallback(false)}>Cancel</button>
     </div>

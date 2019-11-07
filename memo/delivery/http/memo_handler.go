@@ -138,6 +138,21 @@ func (m *MemoHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	vars := mux.Vars(r)
+	noteID, ok := vars["id"]
+	if !ok {
+		http.Error(w, "missing note id", http.StatusBadRequest)
+		return
+	}
+
+	noteIDInt, err := strconv.ParseUint(noteID, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	note.Id = noteIDInt
+
 	log.Printf("In Edit: %s\n", body)
 
 	ctx := context.Background()
