@@ -4,10 +4,10 @@ import (
 	"context"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
-	"github.com/golang/protobuf/ptypes"
 	"github.com/syndtr/goleveldb/leveldb"
 
 	"github.com/saguywalker/go-memo/memo/repository"
@@ -45,7 +45,7 @@ func TestMemoUsecase(t *testing.T) {
 	s1 := model.Note{
 		Title:    "No.1",
 		Detail:   "this is a first note",
-		LastEdit: ptypes.TimestampNow(),
+		LastEdit: time.Now().Format(time.RFC822),
 	}
 	err = mu.Store(ctx, &s1)
 	if err != nil {
@@ -56,7 +56,7 @@ func TestMemoUsecase(t *testing.T) {
 	s2 := model.Note{
 		Title:    "No.2",
 		Detail:   "this is a second note",
-		LastEdit: ptypes.TimestampNow(),
+		LastEdit: time.Now().Format(time.RFC822),
 	}
 	err = mu.Store(ctx, &s2)
 	if err != nil {
@@ -68,7 +68,7 @@ func TestMemoUsecase(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if tmp.Id != s2.Id || tmp.Title != s2.Title || tmp.Detail != s2.Detail || tmp.LastEdit.GetSeconds() != s2.LastEdit.GetSeconds() {
+	if tmp.Id != s2.Id || tmp.Title != s2.Title || tmp.Detail != s2.Detail || !strings.EqualFold(tmp.LastEdit, s2.LastEdit) {
 		t.Fatalf("expected %+v, got %+v\n", s2, tmp)
 	}
 

@@ -32,6 +32,7 @@ func (m *leveldbMemoRepository) Fetch(ctx context.Context) ([]*model.Note, error
 
 		var note model.Note
 		if err := proto.Unmarshal(noteBytes, &note); err != nil {
+			// notes = append(notes, &note)
 			return nil, err
 		}
 

@@ -1,26 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NoteBox from "./components/NoteBox";
 import NoteInput from "./components/NoteInput";
+
+import axios from 'axios';
+
+const endpoint = "http://localhost:3000";
 
 function App() {
   const [notes, setNotes] = useState([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios({
+        method: 'get',
+        url: endpoint+"/api/notes",
+      });
+      if (result.data == null) return;
+      setNotes(result.data);
+    };
+
+    fetchData();
+  }, []);
+
   function addNote({ title, noteDetail }) {
-    const newNotes = [...notes, { title, noteDetail }];
-    
-    setNotes(newNotes);
+    axios.post(
+      endpoint+"/api/notes", 
+      { id: 0, title: title, detail: noteDetail, lastEdit: "" },
+      {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        responseType: 'json'
+      }
+    ).then( (res) => {
+      const newNotes = [...notes, res.data];
+      setNotes(newNotes);
+    });
+    // const result = await axios(endpoint+"/api/notes")
+    // const newNotes = [...notes, { title, noteDetail }];
+    // setNotes(newNotes);
   };
 
-  // function updateNote(index, {title, noteDetail}) {
-  //   const newNotes = [...notes];
-  //   newNotes.splice(index, 1, { title, noteDetail })
-  //   setNotes(newNotes);
-  // };
-
   function setEditNote(editValue, index) {
-    const newNotes = [...notes];
-    newNotes[index] = editValue;
-    setNotes(newNotes);
+    const payload = {id: index, title: editValue.title, detail: editValue.noteDetail, lastEdit: +new Date}
+    axios.put(
+      endpoint+"/api/notes", 
+      {editValue},
+      {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        responseType: 'json'
+      }
+    ).then( (res) => {
+      const newNotes = [...notes, res.data];
+      setNotes(newNotes);
+    });
+    // const newNotes = [...notes];
+    // newNotes[index] = editValue;
+    // setNotes(newNotes);
   }
 
   return (

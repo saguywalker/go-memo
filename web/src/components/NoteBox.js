@@ -4,6 +4,9 @@ import NoteBoxEdit from "./NoteBoxEdit.js";
 function NoteBox({ note, setEditValueCallbackParent }) {
   const [isEdit, setIsEdit] = useState(false);
 
+  if (note == null) return;
+  console.log(note);
+
   return (
     <>
       {

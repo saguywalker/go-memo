@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/syndtr/goleveldb/leveldb"
 
 	_memoHttpDeliver "github.com/saguywalker/go-memo/memo/delivery/http"
@@ -32,8 +33,15 @@ func main() {
 	router := mux.NewRouter()
 	_memoHttpDeliver.NewMemoHandler(router.PathPrefix("/api").Subrouter(), memoUcase)
 
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedHeaders: []string{"*"},
+	})
+
+	corsHandler := c.Handler(router)
+
 	srv := &http.Server{
-		Handler:      router,
+		Handler:      corsHandler,
 		Addr:         "127.0.0.1:3000",
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,

@@ -3,8 +3,8 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -26,10 +26,10 @@ func NewMemoHandler(r *mux.Router, uc memo.Usecase) {
 		MHandler: uc,
 	}
 
-	r.HandleFunc("/notes", handler.Store).Methods("POST")
+	r.HandleFunc("/notes", handler.Store).Methods("POST", "OPTIONS")
 	r.HandleFunc("/notes", handler.Fetch).Methods("GET")
 	r.HandleFunc("/notes/{id}", handler.GetByID).Methods("GET")
-	r.HandleFunc("/notes/{id}", handler.Update).Methods("PUT")
+	r.HandleFunc("/notes/{id}", handler.Update).Methods("PUT", "OPTIONS")
 }
 
 // Store for storing note
@@ -43,6 +43,8 @@ func (m *MemoHandler) Store(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("In Store: %s\n", body)
+
 	ctx := context.Background()
 
 	if err := json.Unmarshal(body, &note); err != nil {
@@ -55,18 +57,27 @@ func (m *MemoHandler) Store(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	noteBytes, err := json.Marshal(note)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("Memo: %d (%s) is created", note.Id, note.Title)))
+	w.Write(noteBytes)
 }
 
 // Fetch for retriving all notes
 func (m *MemoHandler) Fetch(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
+
 	notes, err := m.MHandler.Fetch(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	log.Printf("In Fetch: %+v\n", notes)
 
 	notesBytes, err := json.Marshal(notes)
 	if err != nil {
@@ -104,6 +115,8 @@ func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("In GetByID: %+v\n", note)
+
 	noteByte, err := json.Marshal(note)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -125,6 +138,8 @@ func (m *MemoHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("In Edit: %s\n", body)
+
 	ctx := context.Background()
 
 	if err := json.Unmarshal(body, &note); err != nil {
@@ -137,6 +152,12 @@ func (m *MemoHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notesBytes, err := json.Marshal(note)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("Memo: %d (%s) is created", note.Id, note.Title)))
+	w.Write(notesBytes)
 }
