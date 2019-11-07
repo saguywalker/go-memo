@@ -4,7 +4,6 @@ function NoteBox({ note, setIsEditCallback, setEditValueCallback, closeNoteBoxDe
   const [editValue, setEditValue] = useState({...note});
 
   function submitEdit() {
-    // Edit request to api
     setEditValueCallback(editValue);
     setIsEditCallback(false);
     closeNoteBoxDetail();
