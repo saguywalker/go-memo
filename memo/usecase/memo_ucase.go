@@ -27,6 +27,7 @@ func NewMemoUsecase(mr memo.Repository, timeout time.Duration) memo.Usecase {
 func (m *memoUsecase) Fetch(c context.Context) ([]*model.Note, error) {
 	ctx, cancel := context.WithTimeout(c, m.contextTimeout)
 	defer cancel()
+
 	return m.memoRepo.Fetch(ctx)
 }
 

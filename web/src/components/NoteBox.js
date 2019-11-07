@@ -15,7 +15,6 @@ function NoteBox({ note, setEditValueCallbackToParent }) {
             <h4>{note.title}</h4>
             <p>Last edit: {note.lastEdit}</p>
           </div>
-          <p className="text">{note.detail}</p>
           <button type="button" className="btn btn-link" onClick={() => setIsSeeMore(true)}>More</button>
         </div> :
         <NoteBoxDetail

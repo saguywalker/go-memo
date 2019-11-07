@@ -69,7 +69,7 @@ func TestMemoUsecase(t *testing.T) {
 		t.Fatal(err)
 	}
 	if tmp.Id != s2.Id || tmp.Title != s2.Title || tmp.Detail != s2.Detail || !strings.EqualFold(tmp.LastEdit, s2.LastEdit) {
-		t.Fatalf("expected %+v, got %+v\n", s2, tmp)
+		t.Fatalf("expect: %+v, got: %v\n", s2, tmp)
 	}
 
 	// Get2

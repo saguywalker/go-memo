@@ -6,20 +6,24 @@ import {FetchData, Store, Update} from "./services";
 function App() {
   const [notes, setNotes] = useState([]);
 
-  // Fetch data from db first time on load
   useEffect(() => {
-    FetchData().then((res) => setNotes(res.data));
+    FetchData().then((res) => {
+      setNotes(res.data)
+    });
   }, []);
 
   const addNote = (note) => {
-    Store(note).then((res) => setNotes([...notes, res.data]));
+    Store(note).then((res) => {
+      setNotes([...notes, res.data])
+    });
   };
 
   const setEditNoteMain = (editValue) => {
-    Update(editValue).then((res) => setNotes(notes.map((note) => {
-      if (note.id === res.data.id) return res.data;
-      return note;
-    })));
+    Update(editValue).then((res) => {
+      const editValueIndex = notes.indexOf(notes.find(note => note.id === editValue.id));
+      notes[editValueIndex] = res.data;
+      setNotes(notes);
+    });
   };
 
   return (
@@ -27,7 +31,7 @@ function App() {
       <NoteInput 
         addNote={addNote}
       />
-      <h2 style={{color: 'white'}}>My Notes</h2>
+      <h2 style={{color: 'white'}}>Go-Memo</h2>
       <div className="Note-list">
         {
           notes.length !== 0 ? 
