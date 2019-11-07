@@ -77,6 +77,11 @@ func (m *MemoHandler) Fetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(notes) == 0 {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	log.Printf("In Fetch: %+v\n", notes)
 
 	notesBytes, err := json.Marshal(notes)
@@ -112,6 +117,11 @@ func (m *MemoHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if note == nil {
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 

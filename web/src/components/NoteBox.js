@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import NoteBoxDetail from "./NoteBoxDetail.js";
 
-function NoteBox({ note, setEditValueCallbackParent }) {
+function NoteBox({ note, setEditValueCallbackToParent }) {
   const [isSeeMore, setIsSeeMore] = useState(false);
 
   if (note == null) return;
@@ -21,7 +21,7 @@ function NoteBox({ note, setEditValueCallbackParent }) {
         <NoteBoxDetail
           note={note}
           onCloseNoteBoxDetail={(isSeeMoreData) => setIsSeeMore(isSeeMoreData)}
-          setEditValueCallback={(editValue) => setEditValueCallbackParent(editValue)}
+          setEditValueCallback={(editValue) => setEditValueCallbackToParent(editValue)}
         />
       }
     </>

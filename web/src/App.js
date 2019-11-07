@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import NoteBox from "./components/NoteBox";
 import NoteInput from "./components/NoteInput";
-
-import axios from 'axios';
-
-const endpoint = "http://localhost:3000";
+import {FetchData, Store, Update} from "./services";
 
 function App() {
   const [notes, setNotes] = useState([]);
 
   // Fetch data from db first time on load
   useEffect(() => {
+    /*
     const fetchData = async () => {
       const result = await axios({
         method: 'get',
@@ -19,10 +17,24 @@ function App() {
       if (result.data == null) return;
       setNotes(result.data);
     };
-
     fetchData();
+    */
+    FetchData().then((res) => setNotes(res.data));
   }, []);
 
+  const addNote = (note) => {
+    Store(note).then((res) => setNotes([...notes, res.data]));
+  };
+
+  const setEditNoteMain = (editValue) => {
+    Update(editValue).then((res) => setNotes(notes.map((note) => {
+      if (note.id === res.data.id) return res.data;
+      return note;
+    })));
+  };
+
+
+/*
   function addNote(editValue) {
     const payload =  {
       title: editValue.title,
@@ -65,7 +77,7 @@ function App() {
       }));
     });
   }
-
+*/
   return (
     <div className="App">
       <NoteInput 
@@ -75,12 +87,11 @@ function App() {
       <div className="Note-list">
         {
           notes.length !== 0 ? 
-            notes.map((note, index) => (
+            notes.map((note) => (
               <NoteBox
-                key={index}
-                index={index}
+                key={note.id}
                 note={note}
-                setEditValueCallbackParent={(edit) => setEditNoteMain(edit)}
+                setEditValueCallbackToParent={(edit) => setEditNoteMain(edit)}
               />
             )) :
             <h4>There is no note.</h4>  

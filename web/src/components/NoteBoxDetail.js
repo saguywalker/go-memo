@@ -10,10 +10,6 @@ function NoteBoxDetail({ note, onCloseNoteBoxDetail, setEditValueCallback }) {
 			{
 				!isEdit ?
 					<div>
-						{/* <h2>{note.title}</h2>   */}
-						{/* <p className="detail"> */}
-							{/* {note.detail} */}
-						{/* </p> */}
 						<div className="box-header">
             	<h2>{note.title}</h2>
             	<p>Last edit: {note.lastEdit}</p>
