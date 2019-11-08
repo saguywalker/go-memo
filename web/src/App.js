@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import NoteBox from "./components/NoteBox";
 import NoteInput from "./components/NoteInput";
-import {FetchData, Store, Update} from "./services";
+import {FetchData, Store, Update, FetchByID} from "./services";
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -22,8 +22,20 @@ function App() {
     Update(editValue).then((res) => {
       const editValueIndex = notes.indexOf(notes.find(note => note.id === editValue.id));
       notes[editValueIndex] = res.data;
+      console.log(notes);
       setNotes(notes);
     });
+  };
+
+  const fetchNoteById = (noteId) => {
+    const newNote = FetchByID(noteId).then((res) => {
+      const noteIndex = notes.indexOf(notes.find(note => note.id === noteId));
+      notes[noteIndex] = res.data;
+      console.log(notes);
+      setNotes(notes);
+      return res.data;
+    });
+    return newNote;
   };
 
   return (
@@ -39,6 +51,7 @@ function App() {
               <NoteBox
                 key={note.id}
                 note={note}
+                fetchNoteByIdCallbackToParent={(id) => fetchNoteById(id)}
                 setEditValueCallbackToParent={(edit) => setEditNoteMain(edit)}
               />
             )) :
