@@ -22,6 +22,7 @@ func main() {
 	dbDir := flag.String("dbdir", "memodb", "a db path for storing memo")
 	flag.Parse()
 
+	// Open leveldb from dbDir path
 	db, err := leveldb.OpenFile(*dbDir, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -29,12 +30,16 @@ func main() {
 	}
 	defer db.Close()
 
+	// MemoRepo for communicating with database
 	memoRepo := _memoRepo.NewLevelDBMemoRepository(db)
+	// MemoUcase for business logic
 	memoUcase := _memoUcase.NewMemoUsecase(memoRepo, time.Duration(15*time.Second))
 
+	// Define a router with paths
 	router := mux.NewRouter()
 	_memoHttpDeliver.NewMemoHandler(router.PathPrefix("/api").Subrouter(), memoUcase)
 
+	// AllowAll in CORS ***Only in Development Step***
 	cors := cors.AllowAll()
 	corsHandler := cors.Handler(router)
 
