@@ -22,6 +22,18 @@ func NewLevelDBMemoRepository(db *leveldb.DB) memo.Repository {
 	return &leveldbMemoRepository{db}
 }
 
+// LastNoteID return a last note id (1 as default)
+func (m *leveldbMemoRepository) LastNoteID() uint64 {
+	iter := m.DB.NewIterator(nil, nil)
+	if ok := iter.Last(); ok {
+		keyBytes := iter.Key()
+		key, _ := binary.Uvarint(keyBytes)
+		return key
+	}
+
+	return 1
+}
+
 // Fetch retrive all notes from database
 func (m *leveldbMemoRepository) Fetch(ctx context.Context) ([]*model.Note, error) {
 	var notes []*model.Note

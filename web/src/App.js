@@ -11,13 +11,6 @@ function App() {
       setNotes(res.data)
     });
   }, []);
-/*
-  const addNote = (note) => {
-    Store(note).then((res) => {
-      setNotes([...notes, res.data])
-    });
-  };
-*/
 
   const addNote = async (note) => {
     const resp = await Store(note);

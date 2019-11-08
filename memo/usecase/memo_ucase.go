@@ -20,7 +20,7 @@ func NewMemoUsecase(mr memo.Repository, timeout time.Duration) memo.Usecase {
 	return &memoUsecase{
 		memoRepo:       mr,
 		contextTimeout: timeout,
-		CounterID:      1,
+		CounterID:      mr.LastNoteID(),
 	}
 }
 
