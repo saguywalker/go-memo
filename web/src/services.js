@@ -15,7 +15,7 @@ const FetchByID = async (noteId) => {
         method: 'get',
         url: `${ENDPOINT}/notes/${noteId}`,
     });
-    return result.data;
+    return result;
 };
 
 const Store = async (note) => {
