@@ -2,4 +2,4 @@ run-go:
 	go run main.go
 	
 run-web:
-	cd web && yarn && yarn start
+	cd web && yarn && yarn build &&yarn start
