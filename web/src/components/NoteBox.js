@@ -13,7 +13,7 @@ function NoteBox({ note, setEditValueCallbackToParent }) {
         <div className="Note-box">
           <div className="box-header">
             <h4>{note.title}</h4>
-            <p>Last edit: {note.lastEdit}</p>
+            <p>{note.lastEdit}</p>
           </div>
           <button type="button" className="btn btn-link" onClick={() => setIsSeeMore(true)}>More</button>
         </div> :
