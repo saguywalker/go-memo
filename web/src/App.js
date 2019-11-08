@@ -11,31 +11,32 @@ function App() {
       setNotes(res.data)
     });
   }, []);
-
+/*
   const addNote = (note) => {
     Store(note).then((res) => {
       setNotes([...notes, res.data])
     });
   };
+*/
 
-  const setEditNoteMain = (editValue) => {
-    Update(editValue).then((res) => {
-      const editValueIndex = notes.indexOf(notes.find(note => note.id === editValue.id));
-      notes[editValueIndex] = res.data;
-      console.log(notes);
-      setNotes(notes);
-    });
+  const addNote = async (note) => {
+    const resp = await Store(note);
+    setNotes([...notes, resp.data]);
   };
 
-  const fetchNoteById = (noteId) => {
-    const newNote = FetchByID(noteId).then((res) => {
-      const noteIndex = notes.indexOf(notes.find(note => note.id === noteId));
-      notes[noteIndex] = res.data;
-      console.log(notes);
-      setNotes(notes);
-      return res.data;
-    });
-    return newNote;
+  const setEditNoteMain = async (editValue) => {
+    const resp = await Update(editValue);
+    const editValueIndex = notes.indexOf(notes.find(note => note.id === editValue.id));
+    notes[editValueIndex] = resp.data;
+    setNotes([...notes]);
+  };
+
+  const fetchNoteById = async (noteId) => {
+    const resp = await FetchByID(noteId);
+    const noteIndex = notes.indexOf(notes.find(note => note.id === noteId));
+    notes[noteIndex] = resp.data;
+    setNotes([...notes]);
+    return resp.data;
   };
 
   return (
@@ -55,7 +56,8 @@ function App() {
                 setEditValueCallbackToParent={(edit) => setEditNoteMain(edit)}
               />
             )) :
-            <h4>There is no note.</h4>  
+            <h4>There is no note.</h4>
+           
         }
       </div>
     </div>

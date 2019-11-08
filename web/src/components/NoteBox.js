@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import NoteBoxDetail from "./NoteBoxDetail.js";
 
-function NoteBox({ note, setEditValueCallbackToParent }) {
+function NoteBox({ note, setEditValueCallbackToParent, fetchNoteByIdCallbackToParent }) {
   const [isSeeMore, setIsSeeMore] = useState(false);
 
-  if (note == null) return;
+  if (note === null) return;
+
+  const submitMoreButton = async () => {
+    note = await fetchNoteByIdCallbackToParent(note.id);
+    setIsSeeMore(true);
+  };
 
   return (
     <>
@@ -15,7 +20,7 @@ function NoteBox({ note, setEditValueCallbackToParent }) {
             <h4>{note.title}</h4>
             <p>{note.lastEdit}</p>
           </div>
-          <button type="button" className="btn btn-link" onClick={() => setIsSeeMore(true)}>More</button>
+          <button type="button" className="btn btn-link" onClick={submitMoreButton}>More</button>
         </div> :
         <NoteBoxDetail
           note={note}
