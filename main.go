@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -33,18 +35,31 @@ func main() {
 	router := mux.NewRouter()
 	_memoHttpDeliver.NewMemoHandler(router.PathPrefix("/api").Subrouter(), memoUcase)
 
-	c := cors.AllowAll()
-	corsHandler := c.Handler(router)
+	cors := cors.AllowAll()
+	corsHandler := cors.Handler(router)
 
+	duration := 15 * time.Second
 	srv := &http.Server{
 		Handler:      corsHandler,
 		Addr:         "127.0.0.1:3000",
-		ReadTimeout:  15 * time.Second,
-		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  duration,
+		WriteTimeout: duration,
 	}
 
 	log.Println("serving api at http://127.0.0.1:3000")
-	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-		log.Fatalln(err)
-	}
+	go func() {
+		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+			log.Fatalln(err)
+		}
+	}()
+
+	// Graceful Shutdown
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+	ctx, cancel := context.WithTimeout(context.Background(), duration)
+	defer cancel()
+	srv.Shutdown(ctx)
+	log.Println("shutting down")
+	os.Exit(0)
 }

@@ -25,6 +25,7 @@ func NewLevelDBMemoRepository(db *leveldb.DB) memo.Repository {
 // LastNoteID return a last note id (1 as default)
 func (m *leveldbMemoRepository) LastNoteID() uint64 {
 	iter := m.DB.NewIterator(nil, nil)
+	defer iter.Release()
 	if ok := iter.Last(); ok {
 		keyBytes := iter.Key()
 		key, _ := binary.Uvarint(keyBytes)
